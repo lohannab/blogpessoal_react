@@ -21,7 +21,7 @@ function FormTema() {
     async function buscarPorId(id: string) {
         try {
             await buscar(`/temas/${id}`, setTema, {
-                headers: { Authorization: token }
+                headers: { 'Authorization': token }
             })
         } catch (error: any) {
             if (error.toString().includes('403')) {
