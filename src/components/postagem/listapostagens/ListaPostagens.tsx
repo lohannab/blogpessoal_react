@@ -10,10 +10,10 @@ import { Bounce, toast } from "react-toastify";
 function ListaPostagens() {
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [postagens, setPostagens] = useState<Postagem[]>([]);
 
-  const { usuario, handleLogout } = useContext(AuthContext);
+  const { usuario, handleLogout } = useContext(AuthContext); 
   const token = usuario.token;
 
   useEffect(() => {

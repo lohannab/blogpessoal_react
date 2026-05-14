@@ -37,7 +37,7 @@ function Perfil() {
                 <div className="relative flex justify-center -mt-16 md:-mt-24">
                     <img
                         className="rounded-full w-32 h-32 md:w-48 md:h-48 border-4 md:border-8 border-yellow-400 bg-white shadow-[4px_4px_0_0_rgba(0,0,0,1)] relative z-10 object-cover"
-                        src={usuario.foto || "https://i.imgur.com/8RK9k6o.png"}
+                        src={usuario.foto || "https://i.imgur.com/HeIi0wU.png"}
                         alt={`Foto de perfil de ${usuario.nome}`}
                     />
                 </div>
