@@ -3,166 +3,181 @@ import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import type Usuario from "../../models/Usuario";
 import { cadastrarUsuario } from "../../services/Service";
+import { Bounce, toast } from "react-toastify";
 
-function Cadastro() {     //Cadastro de usuário, com validação de senha e confirmação de senha, além de feedback visual durante o processo de cadastro.
+function Cadastro() {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()  // Hook para navegação entre páginas
-  
-  const [isLoading, setIsLoading] = useState<boolean>(false) // Estado para controlar o carregamento durante o processo de cadastro
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [confirmarSenha, setConfirmarSenha] = useState<string>("");
 
-  const[confirmarSenha, setConfirmarSenha] = useState<string>("") // Estado para armazenar a senha de confirmação, garantindo que o usuário digite a mesma senha duas vezes para evitar erros de digitação
-
-  const [usuario, setUsuario] = useState<Usuario>({ // Estado para armazenar os dados do usuário que está sendo cadastrado, incluindo nome, usuário, senha e foto
+  const [usuario, setUsuario] = useState<Usuario>({
     id: 0,
     nome: '',
     usuario: '',
     senha: '',
     foto: ''
-  })
-  
-  useEffect(() => {        // Efeito colateral para verificar se o usuário já está logado. Se o ID do usuário for diferente de 0, significa que ele já está logado e será redirecionado para a página de login.
-    if (usuario.id !== 0){     // Verifica se o usuário já está logado
-      retornar()   // Redireciona para a página de login
+  });
+
+  useEffect(() => {
+    if (usuario.id !== 0) {
+      retornar();
     }
-  }, [usuario])
+  }, [usuario]);
 
-  function retornar(){   // Função para redirecionar o usuário para a página de login
-    navigate('/login')   // Redireciona para a página de login
+  function retornar() {
+    navigate('/login');
   }
 
-  function atualizarEstado(e: ChangeEvent<HTMLInputElement>){    // Função para atualizar o estado do usuário com base nas mudanças nos campos de entrada. Ela utiliza a sintaxe de espalhamento para manter os valores anteriores do usuário e atualiza apenas o campo que foi modificado.
-    setUsuario({                           // Atualiza o estado do usuário com os novos valores dos campos de entrada
-      ...usuario,                // Mantém os valores anteriores do usuário
-      [e.target.name]: e.target.value          // Atualiza o campo específico que foi modificado com o novo valor
-    })
-
+  function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
+    setUsuario({
+      ...usuario,
+      [e.target.name]: e.target.value
+    });
   }
 
-  function handleConfirmarSenha(e: ChangeEvent<HTMLInputElement>){         // Função para atualizar o estado da senha de confirmação com base nas mudanças no campo de entrada. Ela é chamada quando o usuário digita na caixa de confirmação de senha, garantindo que o valor seja atualizado corretamente.
-    setConfirmarSenha(e.target.value)             // Atualiza o estado da senha de confirmação com o novo valor do campo de entrada
+  function handleConfirmarSenha(e: ChangeEvent<HTMLInputElement>) {
+    setConfirmarSenha(e.target.value);
   }
 
-  async function cadastrarNovoUsuario(e: FormEvent<HTMLFormElement>){        // Função assíncrona para lidar com o processo de cadastro do usuário. Ela é chamada quando o formulário é submetido, realizando a validação das senhas e, se tudo estiver correto, fazendo a requisição para cadastrar o usuário no backend.
-    e.preventDefault()           // Previne o comportamento padrão do formulário, que é recarregar a página ao ser submetido
+  async function cadastrarNovoUsuario(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-    if(confirmarSenha === usuario.senha && usuario.senha.length >= 8){      // Verifica se a senha de confirmação é igual à senha digitada e se a senha tem pelo menos 8 caracteres, garantindo que o usuário forneça uma senha segura e que as duas senhas coincidam para evitar erros de digitação.
+    if (confirmarSenha === usuario.senha && usuario.senha.length >= 8) {
+      setIsLoading(true);
 
-      setIsLoading(true)           // Define o estado de carregamento como verdadeiro para indicar que o processo de cadastro está em andamento, permitindo que o feedback visual seja exibido durante a operação assíncrona de cadastro do usuário.
-
-      try{
-        await cadastrarUsuario(`/usuarios/cadastrar`, usuario, setUsuario) // Faz a requisição para cadastrar o usuário no backend, utilizando a função cadastrarUsuario que é importada do serviço. Ela envia os dados do usuário e atualiza o estado do usuário com a resposta da requisição, permitindo que o aplicativo reaja às mudanças no estado do usuário após o cadastro.
-        alert('Usuário cadastrado com sucesso!')  // Exibe um alerta para informar o usuário que o cadastro foi realizado com sucesso, proporcionando feedback positivo após a conclusão do processo de cadastro.
-      }catch(error){                   // Em caso de erro durante o processo de cadastro, exibe um alerta para informar o usuário sobre o problema, permitindo que ele saiba que algo deu errado e possa tomar as medidas necessárias para corrigir o erro ou tentar novamente.
-        alert('Erro ao cadastrar o usuário!') // Exibe um alerta para informar o usuário que houve um erro durante o processo de cadastro, proporcionando feedback negativo e permitindo que ele saiba que o cadastro não foi concluído com sucesso.
+      try {
+        await cadastrarUsuario(`/usuarios/cadastrar`, usuario, setUsuario);
+        toast.success("Player registrado com sucesso! Bem-vindo ao jogo!", {
+          theme: "colored",
+          transition: Bounce,
+        });
+      } catch (error) {
+        toast.error("Erro ao cadastrar! Verifique se os dados estão corretos.", {
+          theme: "colored",
+          transition: Bounce,
+        });
       }
-    }else{
-      alert('Dados do usuário inconsistentes! Verifique as informações do cadastro.')      // Exibe um alerta para informar o usuário que os dados fornecidos são inconsistentes, como senhas que não coincidem ou senhas que não atendem aos requisitos de segurança, permitindo que ele corrija as informações antes de tentar cadastrar novamente.
-      setUsuario({...usuario, senha: ''})           // Limpa o campo de senha no estado do usuário, garantindo que o usuário precise digitar a senha novamente para corrigir o erro, promovendo a segurança e a correção dos dados fornecidos.
-      setConfirmarSenha('')    // Limpa o campo de confirmação de senha, garantindo que o usuário precise digitar a senha de confirmação novamente para corrigir o erro, promovendo a segurança e a correção dos dados fornecidos.
+    } else {
+      toast.warn("Dados inconsistentes! A senha precisa de no mínimo 8 caracteres e as senhas devem coincidir.", {
+        theme: "colored",
+        transition: Bounce,
+      });
+      setUsuario({ ...usuario, senha: '' });
+      setConfirmarSenha('');
     }
 
-    setIsLoading(false)        // Define o estado de carregamento como falso para indicar que o processo de cadastro foi concluído, permitindo que o feedback visual seja atualizado para refletir o término da operação assíncrona de cadastro do usuário.
+    setIsLoading(false);
   }
 
-  return (  // Retorna o JSX que representa a interface de cadastro do usuário, incluindo um formulário com campos para nome, usuário, foto, senha e confirmação de senha, além de botões para cancelar ou cadastrar. O layout é responsivo, com uma imagem de fundo exibida em telas maiores e o formulário centralizado na tela.
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 h-screen 
-            place-items-center font-bold">
-        <div
-          className="bg-[url('https://i.imgur.com/ZZFAmzo.jpg')] lg:block hidden bg-no-repeat 
-                    w-full min-h-screen bg-cover bg-center"
-        ></div>
-        <form className='flex justify-center items-center flex-col w-2/3 gap-3' 
-              onSubmit={cadastrarNovoUsuario}>
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 h-screen place-items-center font-mario">
+      
+      <div
+        className="bg-[url('https://i.postimg.cc/jsVKrD72/cadastro.png')] lg:block hidden bg-no-repeat 
+                   w-full min-h-screen bg-cover bg-center border-r-8 border-black shadow-[10px_0_0_0_rgba(0,0,0,0.2)]"
+      ></div>
 
-          <h2 className='text-slate-900 text-5xl'>Cadastrar</h2>
+      <div className="flex justify-center items-center w-full p-4">
+        <form 
+          className='flex flex-col w-full max-w-md gap-4 p-8 border-4 border-black bg-white shadow-[12px_12px_0_0_rgba(0,0,0,1)]' 
+          onSubmit={cadastrarNovoUsuario}
+        >
+          <h2 className='text-slate-900 text-3xl md:text-4xl text-center uppercase drop-shadow-[2px_2px_0_rgba(0,0,0,0.1)] mb-4'>
+            Novo Player
+          </h2>
+
           <div className="flex flex-col w-full">
-            <label htmlFor="nome">Nome</label>
+            <label htmlFor="nome" className="text-xs uppercase mb-1">Nome Completo</label>
             <input
               type="text"
               id="nome"
               name="nome"
               placeholder="Nome"
-              className="border-2 border-slate-700 rounded p-2"
-              value = {usuario.nome}
+              className="border-2 border-black p-2 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all outline-none"
+              value={usuario.nome}
               onChange={atualizarEstado}
+              required
             />
           </div>
+
           <div className="flex flex-col w-full">
-            <label htmlFor="usuario">Usuario</label>
+            <label htmlFor="usuario" className="text-xs uppercase mb-1">Email / Usuário</label>
             <input
               type="text"
               id="usuario"
               name="usuario"
-              placeholder="Usuario"
-              className="border-2 border-slate-700 rounded p-2"
-              value = {usuario.usuario}
+              placeholder="usuario@email.com"
+              className="border-2 border-black p-2 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all outline-none"
+              value={usuario.usuario}
               onChange={atualizarEstado}
+              required
             />
           </div>
+
           <div className="flex flex-col w-full">
-            <label htmlFor="foto">Foto</label>
+            <label htmlFor="foto" className="text-xs uppercase mb-1">Link da Foto (Avatar)</label>
             <input
               type="text"
               id="foto"
               name="foto"
-              placeholder="Foto"
-              className="border-2 border-slate-700 rounded p-2"
-              value = {usuario.foto}
+              placeholder="URL da imagem"
+              className="border-2 border-black p-2 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all outline-none"
+              value={usuario.foto}
               onChange={atualizarEstado}
             />
           </div>
+
           <div className="flex flex-col w-full">
-            <label htmlFor="senha">Senha</label>
+            <label htmlFor="senha" className="text-xs uppercase mb-1">Senha (Mín. 8 chars)</label>
             <input
               type="password"
               id="senha"
               name="senha"
-              placeholder="Senha"
-              className="border-2 border-slate-700 rounded p-2"
-              value = {usuario.senha}
+              placeholder="********"
+              className="border-2 border-black p-2 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all outline-none"
+              value={usuario.senha}
               onChange={atualizarEstado}
+              required
             />
           </div>
+
           <div className="flex flex-col w-full">
-            <label htmlFor="confirmarSenha">Confirmar Senha</label>
+            <label htmlFor="confirmarSenha" className="text-xs uppercase mb-1">Confirmar Senha</label>
             <input
               type="password"
               id="confirmarSenha"
               name="confirmarSenha"
-              placeholder="Confirmar Senha"
-              className="border-2 border-slate-700 rounded p-2"
+              placeholder="********"
+              className="border-2 border-black p-2 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all outline-none"
               value={confirmarSenha}
               onChange={handleConfirmarSenha}
+              required
             />
           </div>
-          <div className="flex justify-around w-full gap-8">
+
+          <div className="flex flex-col sm:flex-row justify-around w-full gap-4 mt-4">
             <button 
-                type='reset'
-                className='rounded text-white bg-red-400 hover:bg-red-700 w-1/2 py-2'
+                type='button'
+                className='border-2 border-black text-white bg-red-500 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-red-600 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none w-full py-2 uppercase text-xs transition-all'
                 onClick={retornar}
              >
                 Cancelar
             </button>
             <button 
                 type='submit'
-                className='rounded text-white bg-indigo-400 
-                           hover:bg-indigo-900 w-1/2 py-2
-                           flex justify-center' 
+                className='border-2 border-black text-white bg-green-500 shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-green-600 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none w-full py-2 flex justify-center uppercase text-xs transition-all' 
                 >
                 { isLoading ? 
-                  <ClipLoader 
-                    color="#ffffff" 
-                    size={24}
-                  /> : 
+                  <ClipLoader color="#ffffff" size={18} /> : 
                   <span>Cadastrar</span>
                 }
             </button>
           </div>
         </form>
       </div>
-    </>
-  )
+    </div>
+  );
 }
 
-export default Cadastro
+export default Cadastro;

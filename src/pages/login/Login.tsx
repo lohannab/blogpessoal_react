@@ -6,24 +6,23 @@ import type UsuarioLogin from "../../models/UsuarioLogin";
 
 function Login() {
 
-    const navigate = useNavigate(); // Hook do React Router para navegação programática
+    const navigate = useNavigate();
+    const { usuario, handleLogin, isLoading } = useContext(AuthContext)
 
-    const { usuario, handleLogin, isLoading } = useContext(AuthContext)  // Acessa o contexto de autenticação para obter o estado do usuário, a função de login e o estado de carregamento
-
-    const [usuarioLogin, setUsuarioLogin] = useState<UsuarioLogin>(  // Estado local para armazenar os dados de login do usuário, inicializado como um objeto vazio do tipo UsuarioLogin
-        {} as UsuarioLogin  // O tipo é forçado a ser UsuarioLogin para evitar erros de tipo, mas inicialmente é um objeto vazio
+    const [usuarioLogin, setUsuarioLogin] = useState<UsuarioLogin>(
+        {} as UsuarioLogin
     )
 
-    useEffect(() => {                   // Efeito colateral que verifica se o usuário está autenticado (se o token não está vazio) e, se estiver, navega para a página "/home"
-        if (usuario.token !== "") {  // Verifica se o token do usuário não está vazio, indicando que o usuário está autenticado
-            navigate('/home')       // Navega para a página "/home" usando o hook useNavigate do React Router
+    useEffect(() => {
+        if (usuario.token !== "") {
+            navigate('/home')
         }
     }, [usuario])
 
-    function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {  //    Função para atualizar o estado do usuárioLogin com base nas mudanças nos campos de entrada do formulário. Recebe um evento de mudança como argumento, que é do tipo ChangeEvent para um elemento de entrada HTML.
-        setUsuarioLogin({                       // Atualiza o estado do usuárioLogin usando a função setUsuarioLogin. O estado é atualizado criando um novo objeto que mantém os valores anteriores de usuarioLogin e atualiza a propriedade correspondente ao campo de entrada que foi alterado (usando e.target.name para identificar qual campo foi alterado e e.target.value para obter o novo valor).
-            ...usuarioLogin,                    // Mantém os valores anteriores de usuarioLogin usando o operador spread (...).
-            [e.target.name]: e.target.value     // Atualiza a propriedade do estado correspondente ao campo de entrada que foi alterado, usando a sintaxe de propriedade computada para definir a chave do objeto com base no nome do campo de entrada (e.target.name) e atribuindo o novo valor (e.target.value).
+    function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
+        setUsuarioLogin({
+            ...usuarioLogin,
+            [e.target.name]: e.target.value
         })
     }
 
@@ -33,63 +32,73 @@ function Login() {
     }
 
     return (
-        <>
-            <div className="grid grid-cols-1 lg:grid-cols-2 h-screen place-items-center font-bold ">
-                <form className="flex justify-center items-center flex-col w-1/2 gap-4" 
-                    onSubmit={login}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-screen place-items-center font-mario">
+            
+            <div className="flex justify-center items-center w-full p-4">
+                <form 
+                    className="flex flex-col w-full max-w-md gap-6 p-8 border-4 border-black bg-white shadow-[12px_12px_0_0_rgba(0,0,0,1)]" 
+                    onSubmit={login}
+                >
+                    <h2 className="text-slate-900 text-3xl md:text-5xl text-center uppercase drop-shadow-[2px_2px_0_rgba(0,0,0,0.1)] mb-4">
+                        Entrar
+                    </h2>
 
-                    <h2 className="text-slate-900 text-5xl ">Entrar</h2>
                     <div className="flex flex-col w-full">
-                        <label htmlFor="usuario">Usuário</label>
+                        <label htmlFor="usuario" className="text-xs uppercase mb-1">Usuário</label>
                         <input
                             type="text"
                             id="usuario"
                             name="usuario"
-                            placeholder="Usuario"
-                            className="border-2 border-slate-700 rounded p-2"
-                            value = {usuarioLogin.usuario}
+                            placeholder="Seu email"
+                            className="border-2 border-black p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all outline-none"
+                            value={usuarioLogin.usuario}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
+                            required
                         />
                     </div>
+
                     <div className="flex flex-col w-full">
-                        <label htmlFor="senha">Senha</label>
+                        <label htmlFor="senha" className="text-xs uppercase mb-1">Senha</label>
                         <input
                             type="password"
                             id="senha"
                             name="senha"
-                            placeholder="Senha"
-                            className="border-2 border-slate-700 rounded p-2"
-                            value = {usuarioLogin.senha}
+                            placeholder="********"
+                            className="border-2 border-black p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all outline-none"
+                            value={usuarioLogin.senha}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
+                            required
                         />
                     </div>
+
                     <button 
                         type='submit' 
-                        className="rounded bg-indigo-400 flex justify-center
-                                   hover:bg-indigo-900 text-white w-1/2 py-2">
+                        className="bg-indigo-500 border-2 border-black text-white py-3 uppercase text-sm shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-indigo-700 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex justify-center items-center"
+                    >
                         { isLoading ? 
-                            <ClipLoader 
-                                color="#ffffff" 
-                                size={24}
-                            /> : 
-                            <span>Entrar</span>
+                            <ClipLoader color="#ffffff" size={20} /> : 
+                            <span>Press Start</span>
                         }
                     </button>
 
-                    <hr className="border-slate-800 w-full" />
+                    <hr className="border-t-2 border-slate-200 w-full" />
 
-                   <p>
-                        Ainda não tem uma conta?{' '}
-                        <Link to="/cadastro" className="text-indigo-800 hover:underline">
-                            Cadastre-se
+                    <p className="text-center text-[10px] md:text-xs uppercase leading-relaxed">
+                        Ainda não tem uma conta? <br />
+                        <Link to="/cadastro" className="text-indigo-600 hover:text-indigo-800 underline decoration-2 underline-offset-4">
+                            Cadastre-se aqui
                         </Link>
                     </p>
                 </form>
-                 <div className="bg-[url('https://i.imgur.com/ZZFAmzo.jpg')] lg:block hidden bg-no-repeat 
-                            w-full min-h-screen bg-cover bg-center"
-                ></div>
             </div>
-        </>
+
+            <div 
+                className="bg-[url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhK-4SjCap7dXDkJ3ZCRCPFTQifxtg5ozjIZkO6mgvVHxPw3BIZDPDkcGfl6OzblQSXCGoxtmlpoh_C0jI1lLkYnqzpLSvQ6GK8T-5U5QYnAh3MP_hb0dsFh7AwWvLF2sgG1SQyGXiRXMol/s1600/mapa.gif')] lg:block hidden bg-no-repeat 
+                           w-full min-h-screen bg-cover bg-center border-l-8 border-black"
+            >
+                <div className="w-full h-full bg-blue-500/10"></div>
+            </div>
+        </div>
     );
 }
 

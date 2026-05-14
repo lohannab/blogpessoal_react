@@ -33,7 +33,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(true); // Ativa o estado de carregamento
     try {
       await loginUsuario(`/usuarios/logar`, usuarioLogin, setUsuario); // Chama a função de login do serviço, passando a URL, os dados do usuário e a função para atualizar o estado do usuário
-      toast.success("Usuário logado com sucesso!", {
+      toast.success("Usuário logado com sucesso! 🍄", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         transition: Bounce,
       });
     } catch (error) {
-      toast.error("Erro ao logar usuário!", {
+      toast.error("Erro ao logar usuário! 🐢", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

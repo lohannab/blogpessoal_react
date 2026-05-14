@@ -11,7 +11,6 @@ function ListaPostagens() {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const [postagens, setPostagens] = useState<Postagem[]>([]);
 
   const { usuario, handleLogout } = useContext(AuthContext);
@@ -19,7 +18,7 @@ function ListaPostagens() {
 
   useEffect(() => {
     if (token === "") {
-      toast.warn("Você precisa estar logado!", {
+      toast.warn("Você precisa estar logado! ⭐", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -27,10 +26,9 @@ function ListaPostagens() {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "light",
+        theme: "colored", 
         transition: Bounce,
       });
-      navigate("/");
       navigate("/");
     }
   }, [token]);
@@ -58,22 +56,30 @@ function ListaPostagens() {
   return (
     <>
       {isLoading && (
-        <div className="flex justify-center w-full my-8">
-          <SyncLoader color="#312e81" size={32} />
+        <div className="flex flex-col justify-center items-center w-full my-12">
+          <SyncLoader color="#ef4444" size={25} />
+          <p className="font-black uppercase text-red-600 mt-4 animate-bounce">
+            Buscando Postagens...
+          </p>
         </div>
       )}
 
       <div className="flex justify-center w-full my-4">
-        <div className="container flex flex-col">
+        <div className="container flex flex-col mx-4">
+          
           {!isLoading && postagens.length === 0 && (
-            <span className="text-3xl text-center my-8">
-              Nenhuma Postagem foi encontrada!
-            </span>
+            <div className="flex flex-col items-center justify-center my-12 p-10 border-4 border-black bg-white shadow-[8px_8px_0_0_rgba(0,0,0,1)]">
+              <span className="text-4xl font-black text-red-600 uppercase text-center">
+                Mamma Mia! 
+                <br />
+                <span className="text-2xl text-black">Nenhuma postagem encontrada.</span>
+              </span>
+            </div>
           )}
 
           <div
             className="grid grid-cols-1 md:grid-cols-2 
-                                    lg:grid-cols-3 gap-8"
+                       lg:grid-cols-3 gap-10 mb-10"
           >
             {postagens.map((postagem) => (
               <CardPostagem key={postagem.id} postagem={postagem} />

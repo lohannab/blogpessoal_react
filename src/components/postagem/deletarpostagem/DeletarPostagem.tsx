@@ -33,15 +33,10 @@ function DeletarPostagem() {
 
   useEffect(() => {
     if (token === "") {
-      toast.warn("Você precisa estar logado!", {
+      toast.warn("Você precisa estar logado! 🍄", {
         position: "top-right",
         autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
+        theme: "colored",
         transition: Bounce,
       });   
       navigate("/");
@@ -64,30 +59,16 @@ function DeletarPostagem() {
         },
       });
 
-      toast.success("Postagem apagada com sucesso!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
+      toast.success("Postagem excluída! 🍄", {
+        theme: "colored",
         transition: Bounce,
       });
     } catch (error: any) {
       if (error.toString().includes("401")) {
         handleLogout();
       } else {
-        toast.error("Erro ao deletar a postagem!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
+        toast.error("Erro ao deletar! 🐢", {
+          theme: "colored",
           transition: Bounce,
         });
       }
@@ -102,31 +83,35 @@ function DeletarPostagem() {
   }
 
   return (
-    <div className="container w-1/3 mx-auto">
-      <h1 className="text-4xl text-center my-4">Deletar Postagem</h1>
+    <div className="container w-full max-w-lg mx-auto py-12 px-4">
+      <h1 className="text-5xl font-black text-center my-4 uppercase tracking-tighter text-red-600 drop-shadow-[3px_3px_0_rgba(0,0,0,1)]">
+        AVISO!
+      </h1>
 
-      <p className="text-center font-semibold mb-4">
-        Você tem certeza de que deseja apagar a postagem a seguir?
+      <p className="text-center font-bold mb-8 uppercase text-slate-700">
+        Deseja mesmo apagar essa postagem?
       </p>
 
-      <div className="border flex flex-col rounded-2xl overflow-hidden justify-between">
-        <header className="py-2 px-6 bg-indigo-600 text-white font-bold text-2xl">
-          Postagem
+      <div className="border-4 border-black flex flex-col overflow-hidden justify-between bg-white shadow-[10px_10px_0_0_rgba(0,0,0,1)]">
+        <header className="py-2 px-6 bg-red-600 text-white font-black text-2xl border-b-4 border-black uppercase">
+          Deletar Postagem
         </header>
-        <div className="p-4">
-          <p className="text-xl h-full">{postagem.titulo}</p>
-          <p>{postagem.texto}</p>
+        
+        <div className="p-6 bg-slate-50">
+          <p className="text-2xl font-black text-slate-800 uppercase mb-2">{postagem.titulo}</p>
+          <p className="italic text-slate-600">{postagem.texto}</p>
         </div>
-        <div className="flex">
+
+        <div className="flex border-t-4 border-black">
           <button
-            className="text-slate-100 bg-red-400 hover:bg-red-600 w-full py-2"
+            className="w-full text-white bg-green-500 hover:bg-green-600 py-3 font-black uppercase border-r-4 border-black transition-colors"
             onClick={retornar}
           >
             Não
           </button>
+          
           <button
-            className="w-full text-slate-100 bg-indigo-400 
-                        hover:bg-indigo-600 flex items-center justify-center"
+            className="w-full text-white bg-red-500 hover:bg-red-700 flex items-center justify-center py-3 font-black uppercase transition-colors"
             onClick={deletarPostagem}
           >
             {isLoading ? (

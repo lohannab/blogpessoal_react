@@ -16,7 +16,6 @@ function FormTema() {
   const navigate = useNavigate();
 
   const [tema, setTema] = useState<Tema>({} as Tema);
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { usuario, handleLogout } = useContext(AuthContext);
@@ -38,15 +37,10 @@ function FormTema() {
 
   useEffect(() => {
     if (token === "") {
-      toast.warn("Você precisa estar logado!", {
+      toast.warn("Você precisa estar logado! It's-a me, Mario!", {
         position: "top-right",
         autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
+        theme: "colored",
         transition: Bounce,
       });
       navigate("/");
@@ -74,37 +68,19 @@ function FormTema() {
     e.preventDefault();
     setIsLoading(true);
 
+    const textoSucesso = id !== undefined ? "Tema atualizado! 🍄" : "Tema cadastrado! 🍄";
+
     if (id !== undefined) {
       try {
         await atualizar(`/temas`, tema, setTema, {
           headers: { Authorization: token },
         });
-        toast.success("O Tema foi atualizado com sucesso!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        toast.success(textoSucesso, { theme: "colored", transition: Bounce });
       } catch (error: any) {
         if (error.toString().includes("401")) {
           handleLogout();
         } else {
-          toast.error("Erro ao atualizar o Tema!", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
+          toast.error("Erro ao atualizar! 🐢", { theme: "colored" });
         }
       }
     } else {
@@ -112,32 +88,12 @@ function FormTema() {
         await cadastrar(`/temas`, tema, setTema, {
           headers: { Authorization: token },
         });
-        toast.success("O Tema foi cadastrado com sucesso!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        toast.success(textoSucesso, { theme: "colored", transition: Bounce });
       } catch (error: any) {
         if (error.toString().includes("401")) {
           handleLogout();
         } else {
-          toast.error("Erro ao cadastrar o Tema!", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
+          toast.error("Erro ao cadastrar! 🐢", { theme: "colored" });
         }
       }
     }
@@ -147,32 +103,38 @@ function FormTema() {
   }
 
   return (
-    <div className="container flex flex-col items-center justify-center mx-auto">
-      <h1 className="text-4xl text-center my-8">
-        {id === undefined ? "Cadastrar Tema" : "Editar Tema"}
+    <div className="container flex flex-col items-center justify-center mx-auto py-12">
+      <h1 className="text-5xl font-black uppercase tracking-tighter drop-shadow-[4px_4px_0_rgba(0,0,0,1)] text-yellow-400 mb-10">
+        {id === undefined ? "Novo Tema" : "Editar Tema"}
       </h1>
 
-      <form className="w-1/2 flex flex-col gap-4" onSubmit={gerarNovoTema}>
+      <form 
+        className="w-full max-w-md flex flex-col gap-6 p-8 border-4 border-black bg-white shadow-[10px_10px_0_0_rgba(0,0,0,1)]" 
+        onSubmit={gerarNovoTema}
+      >
         <div className="flex flex-col gap-2">
-          <label htmlFor="descricao">Descrição do Tema</label>
+          <label htmlFor="descricao" className="font-black uppercase text-sm">
+            Descrição do Tema 
+          </label>
           <input
             type="text"
-            placeholder="Descreva aqui seu tema"
+            placeholder="Ex: Planície do Cogumelo"
             name="descricao"
-            className="border-2 border-slate-700 rounded p-2"
+            required
+            className="border-4 border-black p-3 font-bold focus:bg-yellow-50 outline-none transition-all"
             value={tema.descricao}
             onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
           />
         </div>
+
         <button
-          className="rounded text-slate-100 bg-indigo-400 
-                               hover:bg-indigo-800 w-1/2 py-2 mx-auto flex justify-center"
+          className="mt-2 border-4 border-black bg-[#F8D870] hover:bg-[#f3c11e] active:shadow-none active:translate-x-1 active:translate-y-1 text-black font-black uppercase py-4 shadow-[5px_5px_0_0_rgba(0,0,0,1)] flex justify-center items-center transition-all"
           type="submit"
         >
           {isLoading ? (
-            <ClipLoader color="#ffffff" size={24} />
+            <ClipLoader color="#000000" size={24} />
           ) : (
-            <span>{id === undefined ? "Cadastrar" : "Atualizar"}</span>
+            <span>{id === undefined ? "Cadastrar Tema" : "Salvar Alterações"}</span>
           )}
         </button>
       </form>

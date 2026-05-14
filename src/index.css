@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+  --font-mario: "Press Start 2P", system-ui;
+}
+
+.font-mario {
+  font-family: "Press Start 2P", system-ui !important;
+}
