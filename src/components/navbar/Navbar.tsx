@@ -2,12 +2,12 @@ import { useContext, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Bounce, toast } from "react-toastify";
-import { List, X } from "@phosphor-icons/react"; // Importando ícones para o menu
+import { List, X } from "@phosphor-icons/react"; 
 
 function Navbar() {
   const navigate = useNavigate();
   const { usuario, handleLogout } = useContext(AuthContext);
-  const [open, setOpen] = useState(false); // Estado para controlar o menu mobile
+  const [open, setOpen] = useState(false); 
 
   function logout() {
     handleLogout();
